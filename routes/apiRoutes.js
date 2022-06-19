@@ -1,26 +1,50 @@
-// DEPENDENCIES
-// We need to include the path package to get the correct file path for our html
-const path = require('path');
+const app = require('express').Router();
+const fs = require('fs');
+let db = require('../db/db.json');
 
-// ROUTING
 
-module.exports = (app) => {
-    // => HTML GET Requests
-    // Below code handles when users "visit" a page.
-    // In each of the below cases the user is shown an HTML page of content
+app.get('/notes', (req, res) => {
+  db = JSON.parse(fs.readFileSync('./db/db.json', 'utf-8'))
 
-    app.get('/api/notes', (req, res) => {
-        res.json(allNotes.slice(1));
-    })
+  res.json(db);
 
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/index.html'));
-    });
+});
 
-    app.get('/notes', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/notes.html'));
-    })
+app.post('/notes', (req, res) => {
+  let newNote = { // most basic form of a model
+    id: Math.floor(Math.random() * 1000),
+    title: req.body.title,
+    text: req.body.text
+  }
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/index.html'));
-    });
+  // most basic form of a controller
+  db.push(newNote);
+  fs.writeFileSync('./db/db.json', JSON.stringify(db), (err, res) => {
+    if(err) {throw err};
+  });
+
+  res.json(db);
+
+})
+
+app.delete('/notes/:id', (req, res) => {
+  let db = require('../db/db.json');
+
+  let notesToKeep = [];
+
+  for(let i = 0; i < db.length; i++) {
+    if (db[i].id !== req.params.id) {
+      notesToKeep.push(db[i]);
+    }
+  }
+
+  db = notesToKeep;
+  fs.writeFileSync('./db/db.json', JSON.stringify(db), (err, res) => {
+    if(err) {throw err};
+  });
+
+  res.json(db);
+
+});
+
+module.exports = app;

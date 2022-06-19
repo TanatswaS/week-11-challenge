@@ -1,8 +1,10 @@
 // DEPENDENCIES
 // Series of npm packages that we will use to give our server useful functionality
 
-const fs = require('fs'); // DO I NEED THIS?
+
 const express = require('express');
+const htmlRoutes = require('./routes/htmlRoutes');
+const apiRoutes = require('./routes/apiRoutes');
 
 // EXPRESS CONFIGURATION
 // This sets up the basic properties for our express server
@@ -25,9 +27,8 @@ app.use(express.static('public'));
 // The below points our server to a series of "route" files.
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
-require('./routes/apiRoutes')(app);
-require('./routes/htmlRoutes')(app);
-
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
 // LISTENER
 // The below code effectively "starts" our server
@@ -40,48 +41,3 @@ app.listen(PORT, () => {
 
 // END server.js HERE
 
-
-
-
-function createNewNote(body, notesArray) {
-    const newNote = body;
-    if (!Array.isArray(notesArray))
-    notesArray = [];
-
-    if (notesArray.length === 0)
-    notesArray.push(0);
-
-    body.id = notesArray[0];
-    notesArray[0]++;
-
-    notesArray.push(newNote);
-    fs.writeFileSync(
-        path.join(__dirname, './db/db/json'),
-        JSON.stringify(notesArray, null, 2)
-    );
-    return newNote;
-}
-
-app.post('/api/notes', (req, res) => {
-    const newNote = createNewNote(req.body, allNotes);
-    res.json(newNote);
-});
-
-function deleteNote(id,notesArray) {
-    for (let i = 0; i < notesArray.length; i++) {
-        let note = notesArray[i];
-
-        if (note.id == id) {
-            notesArray.splice(i, 1);
-            fs.writeFileSync(
-                path.join(__dirname, './db/db/json'),
-                JSON.stringify(notesArray, null, 2)
-            );
-            break;
-        }
-    }
-}
-
-app.delete('/api/notes/:id', (req, res) => {
-
-})
