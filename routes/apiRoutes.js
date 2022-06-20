@@ -20,7 +20,7 @@ app.post('/notes', (req, res) => {
   // most basic form of a controller
   db.push(newNote);
   fs.writeFileSync('./db/db.json', JSON.stringify(db), (err, res) => {
-    if(err) {throw err};
+    if(err) throw err;
   });
 
   res.json(db);
@@ -33,14 +33,19 @@ app.delete('/notes/:id', (req, res) => {
   let notesToKeep = [];
 
   for(let i = 0; i < db.length; i++) {
-    if (db[i].id !== req.params.id) {
+    console.log(req.params.id)
+    console.log(db[i].id)
+
+    if (parseInt(db[i].id) !== parseInt(req.params.id)) {
       notesToKeep.push(db[i]);
     }
   }
 
+  console.log(notesToKeep);
+
   db = notesToKeep;
   fs.writeFileSync('./db/db.json', JSON.stringify(db), (err, res) => {
-    if(err) {throw err};
+    if(err) throw err;
   });
 
   res.json(db);
