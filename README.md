@@ -33,7 +33,7 @@ THEN I am presented with empty fields to enter a new note title and the note’s
 
 ## Screenshot
 This is a screenshot of the front-end application.
-![Note Taker Application Screenshot](./public/assets/Note-taker-screenshot.PNG
+![Note Taker Application Screenshot](./public/assets/Note-taker-screenshot.PNG)
 
 ## Deployed Application
 Link: https://note-taker-week-11-msu.herokuapp.com/notes
